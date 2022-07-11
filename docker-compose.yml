@@ -1,12 +1,19 @@
-version: '2.4'
+version: '3.9'
 
 services:
-  checkup:
-    hostname: checkup
-    image: checkup:latest
+  checkup-server:
+    image: checkup
     ports:
-      - 3000
+      - "3000:3000"
     volumes:
-      - ./checkup.json:/app/checkup.json
+      - ./checkup.json:/app/checkup.json:ro
       - ./checks:/app/checks
-    restart: always
+    restart: on-failure
+
+  checkup-cron:
+    image: checkup
+    volumes:
+      - ./checkup.json:/app/checkup.json:ro
+      - ./checks:/app/checks
+    restart: on-failure
+    command: ["every", "1m"]
